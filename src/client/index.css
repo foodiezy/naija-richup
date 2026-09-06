@@ -663,10 +663,10 @@ h6 {
   }
 
   .player-token {
-    width: 18px;
-    height: 18px;
-    font-size: 0.95rem;
-    border-width: 1.5px;
+    width: 15px;
+    height: 15px;
+    font-size: 0.72rem;
+    border-width: 1px;
   }
 
   /* Player + holdings cards stay readable */
@@ -1007,6 +1007,7 @@ h6 {
 
 .tile > .tile-name {
   flex: 1 1 auto;
+  min-height: 0;
   width: 100%;
   padding: 2px 3px;
   display: flex;
@@ -1016,7 +1017,8 @@ h6 {
   overflow: hidden;
 }
 
-.tile:hover {
+.tile:hover,
+.tile:focus-visible {
   background-color: #fffaf0;
   box-shadow:
     0 8px 16px -13px rgba(20, 18, 14, 0.35),
@@ -1029,7 +1031,10 @@ h6 {
 .tile-corner {
   background: linear-gradient(180deg, #fffaf0, #f5ecd8);
   font-weight: 700;
-  padding: 4px;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+  padding: 3px;
   box-shadow:
     inset 0 1px 0 rgba(255, 255, 255, 0.82),
     inset 0 0 0 1px rgba(169, 128, 42, 0.08);
@@ -1037,8 +1042,20 @@ h6 {
 
 /* Corner specials (START, Jail, Mama Put, Go-to-Jail) get a larger icon */
 .tile-corner .tile-type-icon {
-  font-size: 1.5rem;
-  margin-bottom: 2px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: clamp(1rem, 2vw, 1.25rem);
+  line-height: 1;
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.tile-corner > .tile-name {
+  flex: 0 0 auto;
+  width: 100%;
+  padding: 1px;
 }
 
 /* Corners always use the short label. "Mama Put Rest Stop (Free Parking)" does
@@ -1081,6 +1098,22 @@ h6 {
   user-select: none;
 }
 
+/* Standalone special-space symbols (utilities, tax and corners) remain centred
+   in their own slot. Airport and Hustle symbols are nested inside the landmark
+   label instead, so these direct-child rules cannot disturb their grouping. */
+.tile:is(.edge-top, .edge-bottom):not(.tile-corner) > .tile-type-icon {
+  width: 100%;
+  align-self: center;
+  text-align: center;
+}
+
+.tile:is(.edge-left, .edge-right):not(.tile-corner) > .tile-type-icon {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 .tile-type-chance {
   width: 1.25em;
   height: 1.25em;
@@ -1098,42 +1131,7 @@ h6 {
 }
 
 .tile-type-hustle {
-  position: relative;
-  width: 1.28em;
-  height: 1em;
-  align-self: center;
-  margin-top: 1px;
-  border-radius: 3px;
-  background: linear-gradient(180deg, #f3ca57 0 25%, #1f879d 26% 100%);
-  border: 1px solid rgba(74, 63, 37, 0.28);
-  box-shadow:
-    inset 0 -3px 0 rgba(0, 0, 0, 0.1),
-    0 2px 4px rgba(37, 29, 16, 0.14);
-}
-
-.tile-type-hustle::before {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: -0.34em;
-  width: 0.48em;
-  height: 0.34em;
-  transform: translateX(-50%);
-  border: 1px solid rgba(74, 63, 37, 0.34);
-  border-bottom: 0;
-  border-radius: 0.28em 0.28em 0 0;
-}
-
-.tile-type-hustle::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 0.45em;
-  width: 0.22em;
-  height: 0.16em;
-  transform: translateX(-50%);
-  border-radius: 1px;
-  background: #f6d36f;
+  font-size: 0.8rem;
 }
 
 .tile-name {
@@ -1152,6 +1150,23 @@ h6 {
   padding: 0 3px;
 }
 
+/* Airports and Hustle spaces are one centred landmark mark. Keeping the icon
+   inside the name container prevents opposite board edges from reversing the
+   icon/name order independently. */
+.tile-name-landmark {
+  flex-direction: column;
+  gap: 2px;
+  padding-inline: 1px;
+}
+
+.tile-name-landmark > .tile-type-icon {
+  flex: 0 0 auto;
+}
+
+.tile-name-landmark > :is(.tile-name-full, .tile-name-short) {
+  flex-shrink: 0;
+}
+
 .tile-name-full,
 .tile-name-short {
   max-width: 100%;
@@ -1167,21 +1182,123 @@ h6 {
   display: none;
 }
 
-/* Bottom price stripe. No fill on white — a hairline is enough separation. */
+/* Richup-style prices face the outside edge of the board. Bottom and top use
+   horizontal strips; the two side rows use the same vertical reading flow as
+   the reference board. */
 .tile-price {
+  /* Prices must not surrender their line box to a wrapped name or icon. */
+  flex: 0 0 auto;
   font-size: 0.58rem;
+  line-height: 1.1;
   font-weight: 800;
   color: var(--ink);
   font-variant-numeric: tabular-nums;
   width: 100%;
   text-align: center;
-  padding: 2px 0 3px;
+  padding: 1px 0;
   border-top: 1px solid rgba(75, 70, 58, 0.12);
   background: rgba(255, 255, 255, 0.44);
-  margin-top: 1px;
+  margin-top: 0;
   letter-spacing: 0.02em;
   white-space: nowrap;
   overflow: hidden;
+}
+
+/* The top row mirrors the bottom row: price faces the outer edge while the
+   colour strip faces the board centre. Keep the words upright for the player. */
+.edge-top .tile-price {
+  order: -1;
+  border-top: 0;
+  border-bottom: 1px solid rgba(75, 70, 58, 0.12);
+}
+
+/* On Richup's side rows, writing-mode turns the column flow into a horizontal
+   one: name toward the centre, price against the outside edge. The right edge
+   reverses both the flow and glyph direction to mirror the left edge. */
+.tile.edge-left:not(.tile-corner),
+.tile.edge-right:not(.tile-corner) {
+  writing-mode: vertical-rl;
+  flex-direction: column;
+  padding-top: 0;
+}
+
+.tile.edge-right:not(.tile-corner) {
+  flex-direction: column-reverse;
+}
+
+.tile:is(.edge-left, .edge-right):not(.tile-corner) > .tile-name {
+  width: auto;
+  height: 100%;
+  padding: 3px 2px;
+}
+
+.tile:is(.edge-left, .edge-right):not(.tile-corner) > .tile-name-landmark {
+  flex-direction: row;
+  gap: 2px;
+  padding: 1px 2px;
+}
+
+/* A side card's readable axis is only one regular tile long. The shorter
+   Hustle label and slightly smaller briefcase keep the complete mark visible. */
+.tile:is(.edge-left, .edge-right):not(.tile-corner) > .tile-name-landmark:has(.tile-type-hustle) {
+  gap: 1px;
+  padding-inline: 1px;
+  font-size: 0.44rem;
+}
+
+.tile:is(.edge-left, .edge-right):not(.tile-corner) > .tile-name-landmark > .tile-type-hustle {
+  font-size: 0.62rem;
+}
+
+/* The right edge is rotated for readable text, so reverse the source flow to
+   keep its icon visually above the label just like the other three edges. */
+.tile.edge-right:not(.tile-corner) > .tile-name-landmark {
+  flex-direction: row-reverse;
+}
+
+.tile:is(.edge-left, .edge-right):not(.tile-corner) :is(.tile-name-full, .tile-name-short) {
+  max-width: none;
+  max-height: none;
+  white-space: nowrap;
+}
+
+.tile:is(.edge-left, .edge-right):not(.tile-corner) > .tile-price {
+  width: auto;
+  height: 100%;
+  padding: 0 2px;
+  margin: 0;
+  border-top: 0;
+  background: rgba(255, 255, 255, 0.44);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+}
+
+.tile.edge-left:not(.tile-corner) > .tile-price {
+  border-right: 1px solid rgba(75, 70, 58, 0.12);
+}
+
+.tile.edge-right:not(.tile-corner) > :is(.tile-name, .tile-price, .tile-type-icon) {
+  transform: rotate(180deg);
+}
+
+.tile.edge-right:not(.tile-corner) > .tile-price {
+  border-left: 1px solid rgba(75, 70, 58, 0.12);
+}
+
+/* Gameplay overlays must remain screen-upright even though side-card copy
+   follows the board edge. */
+.tile:is(.edge-left, .edge-right)
+  > :is(.tile-tooltip, .tile-tokens-container, .tile-owner-indicator) {
+  writing-mode: horizontal-tb;
+}
+
+/* The dice remain substantial on a full board, but scale with compact boards
+   so the locations stay the focus of the game map. Dice3D sets this variable
+   inline, hence the scoped override. */
+.board-center .dice-wrapper {
+  --dice-size: clamp(64px, calc(var(--board-size) * 0.13), 90px) !important;
 }
 
 /* Mortgaged: the tile visibly "sleeps" — band drained, price muted, and a
@@ -1203,12 +1320,12 @@ h6 {
 
 .tile-owner-indicator {
   position: absolute;
-  top: 2px;
-  right: 2px;
+  top: 1px;
+  right: 1px;
   font-size: 0.5rem;
   line-height: 1;
   background: rgba(255, 255, 255, 0.94);
-  padding: 1px 4px;
+  padding: 1px 2px;
   border-radius: var(--r-full);
   border: 1px solid rgba(75, 70, 58, 0.18);
   box-shadow: 0 1px 3px rgba(20, 18, 14, 0.14);
@@ -1217,17 +1334,22 @@ h6 {
 
 /* Keep ownership clear of the zone band and the permanent price stripe. */
 .edge-bottom .tile-owner-indicator {
-  top: 11px;
+  top: 1px;
+}
+
+.edge-top .tile-owner-indicator {
+  top: auto;
+  bottom: 1px;
 }
 
 .edge-left .tile-owner-indicator {
-  left: 2px;
-  right: auto;
+  left: auto;
+  right: 1px;
 }
 
 .edge-right .tile-owner-indicator {
-  left: auto;
-  right: 2px;
+  left: 1px;
+  right: auto;
 }
 
 .tile-mortgaged .tile-owner-indicator {
@@ -1241,8 +1363,7 @@ h6 {
   bottom: calc(100% + 4px);
   left: 50%;
   transform: translateX(-50%);
-  min-width: 130px;
-  max-width: 190px;
+  width: min(180px, calc(var(--board-width, var(--board-size)) * 0.3));
   background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(249, 246, 239, 0.98));
   border: 1px solid rgba(123, 103, 64, 0.16);
   border-radius: 8px;
@@ -1255,11 +1376,56 @@ h6 {
   pointer-events: none;
   transition: opacity var(--d-fast) var(--e-std);
   box-shadow: 0 12px 26px -16px rgba(0, 0, 0, 0.45);
-  white-space: nowrap;
+  white-space: normal;
+  overflow-wrap: anywhere;
 }
 
-.tile:hover .tile-tooltip {
+.tile:hover .tile-tooltip,
+.tile:focus-visible .tile-tooltip {
   opacity: 1;
+}
+
+/* Keep previews within the board's clipping boundary on every edge. */
+.edge-top .tile-tooltip {
+  top: calc(100% + 4px);
+  bottom: auto;
+}
+
+.edge-left .tile-tooltip {
+  top: 50%;
+  bottom: auto;
+  left: calc(100% + 4px);
+  transform: translateY(-50%);
+}
+
+.edge-right .tile-tooltip {
+  top: 50%;
+  bottom: auto;
+  left: auto;
+  right: calc(100% + 4px);
+  transform: translateY(-50%);
+}
+
+/* Use the existing short labels when the board is narrow, even on a
+   tablet-sized viewport where prices are still shown. */
+@media (min-width: 601px) and (max-width: 1023px) {
+  .tile .tile-name-full {
+    display: none;
+  }
+  .tile .tile-name-short {
+    display: block;
+    overflow-wrap: anywhere;
+  }
+  .tile .tile-name {
+    font-size: 0.5rem;
+    padding: 1px;
+  }
+
+  .tile:is(.edge-top, .edge-bottom):not(.tile-corner) .tile-name {
+    font-size: 0.47rem;
+    letter-spacing: -0.03em;
+    padding-inline: 0;
+  }
 }
 
 .tile-tooltip-name {
@@ -1360,7 +1526,7 @@ h6 {
 /* Tokens positioned inside Tile */
 .tile-tokens-container {
   display: flex;
-  flex-wrap: wrap;
+  flex-wrap: nowrap;
   gap: 2px;
   justify-content: center;
   align-items: center;
@@ -1372,16 +1538,49 @@ h6 {
   z-index: 10;
 }
 
+/* Park pieces just inside the board centre, attached to the tile's inner edge.
+   This keeps the location and price readable and makes movement easier to
+   follow around the route. */
+.edge-bottom > .tile-tokens-container {
+  top: -9px;
+  left: 50%;
+  width: auto;
+  transform: translate(-50%, -50%);
+}
+
+.edge-top > .tile-tokens-container {
+  top: auto;
+  bottom: -9px;
+  left: 50%;
+  width: auto;
+  transform: translate(-50%, 50%);
+}
+
+.edge-left > .tile-tokens-container {
+  top: 50%;
+  right: -9px;
+  left: auto;
+  width: auto;
+  transform: translate(50%, -50%);
+}
+
+.edge-right > .tile-tokens-container {
+  top: 50%;
+  left: -9px;
+  width: auto;
+  transform: translate(-50%, -50%);
+}
+
 .player-token {
-  font-size: 1.1rem;
-  width: 22px;
-  height: 22px;
+  font-size: clamp(0.72rem, calc(var(--tile-size) * 0.3), 1.1rem);
+  width: clamp(14px, calc(var(--tile-size) * 0.42), 22px);
+  height: clamp(14px, calc(var(--tile-size) * 0.42), 22px);
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: var(--r-full);
   background: var(--sf);
-  border: 2px solid var(--ln-2);
+  border: clamp(1px, calc(var(--tile-size) * 0.035), 2px) solid var(--ln-2);
   box-shadow: var(--sh-sm);
   z-index: 10;
   transition:
@@ -1476,6 +1675,11 @@ h6 {
     line-height: 1.05;
   }
 
+  .tile:is(.edge-top, .edge-bottom):not(.tile-corner) .tile-name {
+    letter-spacing: -0.03em;
+    padding-inline: 0;
+  }
+
   .tile:not(.tile-corner) .tile-name-full {
     display: none;
   }
@@ -1485,7 +1689,19 @@ h6 {
   }
 
   .tile:not(.tile-corner) .tile-price {
-    display: none;
+    display: block;
+    height: 9px;
+    padding: 1px 0;
+    font-size: 0.38rem;
+    line-height: 1;
+    letter-spacing: -0.01em;
+  }
+
+  .tile:is(.edge-left, .edge-right):not(.tile-corner) .tile-price {
+    display: flex;
+    width: auto;
+    height: 100%;
+    padding: 0 1px;
   }
 
   .tile-corner .tile-name {
@@ -2061,7 +2277,9 @@ html.high-contrast .glass-panel {
   .console-panel {
     padding: 0.85rem;
   }
+}
 
+@media (hover: none) {
   .tile-tooltip {
     display: none;
   }
@@ -2069,9 +2287,9 @@ html.high-contrast .glass-panel {
 
 @media (max-width: 480px) {
   .player-token {
-    width: 18px;
-    height: 18px;
-    font-size: 0.85rem;
+    width: 15px;
+    height: 15px;
+    font-size: 0.72rem;
   }
 }
 
