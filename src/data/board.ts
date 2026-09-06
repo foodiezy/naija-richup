@@ -198,7 +198,7 @@ export const BOARD: Tile[] = [
     mortgage: 30_000,
   },
 
-  { pos: 2, type: "hustle", name: "Hustle Box" },
+  { pos: 2, type: "hustle", name: "Hustle Box", shortName: "Hustle" },
 
   {
     pos: 3,
@@ -319,7 +319,7 @@ export const BOARD: Tile[] = [
     mortgage: 90_000,
   },
 
-  { pos: 17, type: "hustle", name: "Hustle Box" },
+  { pos: 17, type: "hustle", name: "Hustle Box", shortName: "Hustle" },
 
   {
     pos: 18,
@@ -398,7 +398,7 @@ export const BOARD: Tile[] = [
     pos: 26,
     type: "property",
     name: "Port Harcourt",
-    shortName: "P'Harcourt",
+    shortName: "Port Harcourt",
     group: "yellow",
     price: 260_000,
     rent: [22_000, 110_000, 330_000, 800_000, 975_000, 1_150_000],
@@ -465,7 +465,7 @@ export const BOARD: Tile[] = [
     mortgage: 150_000,
   },
 
-  { pos: 33, type: "hustle", name: "Hustle Box" },
+  { pos: 33, type: "hustle", name: "Hustle Box", shortName: "Hustle" },
 
   {
     pos: 34,

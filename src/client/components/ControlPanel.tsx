@@ -104,7 +104,7 @@ export default function ControlPanel({
       </section>
 
       {/* Per-turn AFK countdown */}
-      {isMyTurn && !isBankrupt && !isAuctionActive && turnDeadline && turnDeadline > 0 && (
+      {isMyTurn && !isBankrupt && !isAuctionActive && (turnDeadline ?? 0) > 0 && (
         <div
           className="sidebar-turn-timer"
           style={{

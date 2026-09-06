@@ -2883,6 +2883,47 @@ body.v2-sh-locked {
   min-height: 0;
 }
 
+/* The mobile Actions sheet should open on actions and holdings. The same
+   ControlPanel is also used as the desktop rail, so keep this ordering scoped
+   to the sheet copy. */
+.v2-shell-sheet-panel > .console-panel {
+  display: flex;
+  flex-direction: column;
+  flex: 0 0 auto;
+  min-height: 0;
+  overflow: visible !important;
+}
+
+.v2-shell-sheet-panel .sidebar-debt-warning,
+.v2-shell-sheet-panel .chaos-standing-panel {
+  order: -3;
+}
+
+.v2-shell-sheet-panel .sidebar-actions {
+  order: -2;
+}
+
+.v2-shell-sheet-panel .sidebar-bankruptcy-action,
+.v2-shell-sheet-panel .sidebar-auto-end {
+  order: -1;
+}
+
+.v2-shell-sheet-panel .sidebar-properties {
+  order: 1;
+}
+
+.v2-shell-sheet-panel .sidebar-player-card {
+  order: 2;
+}
+
+.v2-shell-sheet-panel .v2-game-info-card {
+  order: 3;
+}
+
+.v2-shell-sheet-panel .players-panel {
+  order: 4;
+}
+
 /* ── Decorative game objects ───────────────────────────────────────── */
 
 .v2-scatter {

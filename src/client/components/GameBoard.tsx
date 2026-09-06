@@ -36,9 +36,9 @@ function getTileEdge(pos: number): "bottom" | "left" | "top" | "right" {
   return "right";
 }
 
-// Color bar is always on the board-center-facing side of the tile
+// Richup-style perimeter: the colour band always faces the board centre and
+// the price always faces the outside edge.
 function getColorBarStyle(pos: number): React.CSSProperties {
-  // bottom row: bar on top (facing center)
   if (pos <= 10)
     return {
       position: "absolute",
@@ -49,7 +49,6 @@ function getColorBarStyle(pos: number): React.CSSProperties {
       width: "auto",
       borderRadius: "1px 1px 0 0",
     };
-  // left col: bar on right (facing center)
   if (pos <= 20)
     return {
       position: "absolute",
@@ -60,7 +59,6 @@ function getColorBarStyle(pos: number): React.CSSProperties {
       height: "auto",
       borderRadius: "0 1px 1px 0",
     };
-  // top row: bar on bottom (facing center)
   if (pos <= 30)
     return {
       position: "absolute",
@@ -71,7 +69,6 @@ function getColorBarStyle(pos: number): React.CSSProperties {
       width: "auto",
       borderRadius: "0 0 1px 1px",
     };
-  // right col: bar on left (facing center)
   return {
     position: "absolute",
     top: 0,
@@ -106,7 +103,7 @@ function getSpecialTileIcon(tile: Tile): string {
     case "chance":
       return "?";
     case "hustle":
-      return "";
+      return "💼";
     case "airport":
       return "✈️";
     case "utility":
@@ -201,6 +198,7 @@ export default function GameBoard({
         const hasColorBar = tile.type === "property";
         const groupColor = hasColorBar ? (tile as PropertyTile).group : null;
         const tileIcon = !hasColorBar ? getSpecialTileIcon(tile) : "";
+        const hasInlineLandmark = tile.type === "airport" || tile.type === "hustle";
 
         // The tile's zone drives its band and its owned wash. Handing CSS two
         // custom properties keeps every colour decision in the stylesheet —
@@ -305,14 +303,19 @@ export default function GameBoard({
               </div>
             )}
 
-            {/* Special tile icon */}
-            {tileIcon || tile.type === "hustle" ? (
+            {/* Corner and action icons remain standalone. Airport and Hustle
+                icons travel with their label so every board edge reads in the
+                same order. */}
+            {tileIcon && !hasInlineLandmark ? (
               <span className={`tile-type-icon tile-type-${tile.type}`}>{tileIcon}</span>
             ) : null}
 
             {/* Side tiles use compact names; phone tiles rely on the location
                 ticker and deed sheet instead of squeezing text into the map. */}
-            <span className="tile-name">
+            <span className={`tile-name${hasInlineLandmark ? " tile-name-landmark" : ""}`}>
+              {hasInlineLandmark && (
+                <span className={`tile-type-icon tile-type-${tile.type}`}>{tileIcon}</span>
+              )}
               <span className="tile-name-full">{boardLabel(tile)}</span>
               <span className="tile-name-short">{tile.shortName ?? boardLabel(tile)}</span>
             </span>
